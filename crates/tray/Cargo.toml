@@ -1,0 +1,10 @@
+[package]
+name = "harbor-tray"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.91"
+native-windows-gui = "1.0.13"
+harbor-core = { path = "../core" }
+serde_yaml = "0.9.34"

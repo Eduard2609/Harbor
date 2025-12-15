@@ -26,7 +26,8 @@ pub struct Rule {
 pub fn load_downloads_config(path: impl AsRef<Path>) -> Result<DownloadsConfig> {
     let p = path.as_ref();
     let content = fs::read_to_string(p).with_context(|| format!("read {}", p.display()))?;
-    let mut cfg: DownloadsConfig = serde_yaml::from_str(&content).context("parse downloads yaml")?;
+    let mut cfg: DownloadsConfig =
+        serde_yaml::from_str(&content).context("parse downloads yaml")?;
     cfg.download_dir = expand_env(&cfg.download_dir);
     for r in cfg.rules.iter_mut() {
         r.target_dir = expand_env(&r.target_dir);
