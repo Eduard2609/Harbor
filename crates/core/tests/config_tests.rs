@@ -1,4 +1,4 @@
-use harbor_core::config::{load_config, validate_config};
+use harbor_core::config::validate_config;
 
 #[test]
 fn parse_and_validate_sample() {
