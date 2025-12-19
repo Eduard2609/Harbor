@@ -125,6 +125,8 @@ fn main() -> Result<()> {
         let music = format!("{}\\Music", user);
         let archives = format!("{}\\Downloads\\Archives", user);
         let installers = format!("{}\\Downloads\\Installers", user);
+        let torrents = format!("{}\\Downloads\\Torrents", user);
+        let webpages = format!("{}\\Downloads\\Webpages", user);
         DownloadsConfig {
             download_dir: dl,
             min_age_secs: Some(5),
@@ -192,15 +194,44 @@ fn main() -> Result<()> {
                     pattern: None,
                     min_size_bytes: None,
                     max_size_bytes: None,
-                    target_dir: docs,
+                    target_dir: docs.clone(),
                 },
                 Rule {
                     name: "Installers".to_string(),
-                    extensions: Some(["exe", "msi"].iter().map(|s| s.to_string()).collect()),
+                    extensions: Some(
+                        ["exe", "msi", "dmg", "pkg", "apk"]
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect(),
+                    ),
                     pattern: None,
                     min_size_bytes: None,
                     max_size_bytes: None,
                     target_dir: installers,
+                },
+                Rule {
+                    name: "Torrents".to_string(),
+                    extensions: Some(["torrent"].iter().map(|s| s.to_string()).collect()),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: torrents,
+                },
+                Rule {
+                    name: "Data".to_string(),
+                    extensions: Some(["csv"].iter().map(|s| s.to_string()).collect()),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: docs,
+                },
+                Rule {
+                    name: "Web Pages".to_string(),
+                    extensions: Some(["html", "htm"].iter().map(|s| s.to_string()).collect()),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: webpages,
                 },
             ],
         }
