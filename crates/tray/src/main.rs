@@ -127,6 +127,9 @@ fn main() -> Result<()> {
         let installers = format!("{}\\Downloads\\Installers", user);
         let torrents = format!("{}\\Downloads\\Torrents", user);
         let webpages = format!("{}\\Downloads\\Webpages", user);
+        let isos = format!("{}\\Downloads\\ISOs", user);
+        let dev = format!("{}\\Downloads\\Dev", user);
+        let subtitles = format!("{}\\Downloads\\Subtitles", user);
         DownloadsConfig {
             download_dir: dl,
             min_age_secs: Some(5),
@@ -134,7 +137,7 @@ fn main() -> Result<()> {
                 Rule {
                     name: "Images".to_string(),
                     extensions: Some(
-                        ["jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "heic"]
+                        ["jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "heic", "svg", "avif"]
                             .iter()
                             .map(|s| s.to_string())
                             .collect(),
@@ -173,7 +176,7 @@ fn main() -> Result<()> {
                 Rule {
                     name: "Archives".to_string(),
                     extensions: Some(
-                        ["zip", "rar", "7z", "tar", "gz"]
+                        ["zip", "rar", "7z", "tar", "gz", "xz"]
                             .iter()
                             .map(|s| s.to_string())
                             .collect(),
@@ -199,7 +202,7 @@ fn main() -> Result<()> {
                 Rule {
                     name: "Installers".to_string(),
                     extensions: Some(
-                        ["exe", "msi", "dmg", "pkg", "apk"]
+                        ["exe", "msi", "msix", "dmg", "pkg", "apk"]
                             .iter()
                             .map(|s| s.to_string())
                             .collect(),
@@ -210,12 +213,33 @@ fn main() -> Result<()> {
                     target_dir: installers,
                 },
                 Rule {
+                    name: "ISOs".to_string(),
+                    extensions: Some(["iso"].iter().map(|s| s.to_string()).collect()),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: isos,
+                },
+                Rule {
                     name: "Torrents".to_string(),
                     extensions: Some(["torrent"].iter().map(|s| s.to_string()).collect()),
                     pattern: None,
                     min_size_bytes: None,
                     max_size_bytes: None,
                     target_dir: torrents,
+                },
+                Rule {
+                    name: "Dev".to_string(),
+                    extensions: Some(
+                        ["json", "env", "xml", "plist"]
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect(),
+                    ),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: dev,
                 },
                 Rule {
                     name: "Data".to_string(),
@@ -232,6 +256,14 @@ fn main() -> Result<()> {
                     min_size_bytes: None,
                     max_size_bytes: None,
                     target_dir: webpages,
+                },
+                Rule {
+                    name: "Subtitles".to_string(),
+                    extensions: Some(["srt"].iter().map(|s| s.to_string()).collect()),
+                    pattern: None,
+                    min_size_bytes: None,
+                    max_size_bytes: None,
+                    target_dir: subtitles,
                 },
             ],
         }
