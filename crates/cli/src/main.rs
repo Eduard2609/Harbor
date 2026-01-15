@@ -183,6 +183,18 @@ fn tray_install(source: Option<String>) -> Result<()> {
     std::fs::create_dir_all(&install_dir)?;
     let dest = install_dir.join("harbor-tray.exe");
     std::fs::copy(&src, &dest)?;
+    let repo_ico = PathBuf::from("assets/harbor.ico");
+    if repo_ico.exists() {
+        let _ = std::fs::copy(&repo_ico, install_dir.join("harbor.ico"));
+    }
+    let repo_tray_ico = PathBuf::from("assets/harbor-tray.ico");
+    if repo_tray_ico.exists() {
+        let _ = std::fs::copy(&repo_tray_ico, install_dir.join("harbor-tray.ico"));
+    }
+    let repo_icon_h = PathBuf::from("assets/icon_h.ico");
+    if repo_icon_h.exists() {
+        let _ = std::fs::copy(&repo_icon_h, install_dir.join("icon_h.ico"));
+    }
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let path = hkcu.open_subkey_with_flags("Software\\Microsoft\\Windows\\CurrentVersion\\Run", winreg::enums::KEY_WRITE)?;
     let val = format!("\"{}\"", dest.display());

@@ -291,9 +291,26 @@ fn main() -> Result<()> {
     let cfg_arc = Arc::new(cfg);
 
     let mut icon = nwg::Icon::default();
-    nwg::Icon::builder()
-        .source_system(Some(nwg::OemIcon::Information))
-        .build(&mut icon)?;
+    let icon_h = local_appdata_harbor().join("icon_h.ico");
+    let tray_ico = local_appdata_harbor().join("harbor-tray.ico");
+    let app_ico = local_appdata_harbor().join("harbor.ico");
+    if icon_h.exists() {
+        nwg::Icon::builder()
+            .source_file(Some(icon_h.to_string_lossy().as_ref()))
+            .build(&mut icon)?;
+    } else if tray_ico.exists() {
+        nwg::Icon::builder()
+            .source_file(Some(tray_ico.to_string_lossy().as_ref()))
+            .build(&mut icon)?;
+    } else if app_ico.exists() {
+        nwg::Icon::builder()
+            .source_file(Some(app_ico.to_string_lossy().as_ref()))
+            .build(&mut icon)?;
+    } else {
+        nwg::Icon::builder()
+            .source_system(Some(nwg::OemIcon::Information))
+            .build(&mut icon)?;
+    }
 
     let mut window = nwg::MessageWindow::default();
     nwg::MessageWindow::builder().build(&mut window)?;
