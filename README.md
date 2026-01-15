@@ -112,6 +112,49 @@ Development
 - Tests: `cargo test -p harbor-core`
 - Run CLI organize: `harbor-cli downloads-organize harbor.downloads.yaml`
 
+Status
+
+- Platforms
+  - Windows: Ready (tray, CLI, icons, startup). Installer: not yet (CLI-based install).
+  - Linux: Partial (CLI/core organize and symlinks; no tray; no autostart; no installer).
+  - macOS: Partial/untested (CLI/core likely work; no tray; no installer).
+- Icons: Yes (tray loads `icon_h.ico` → `harbor-tray.ico` → `harbor.ico`).
+- UI: Minimal tray menu; no full UI for rules editing or log viewing.
+- Installer: Not yet; Windows uses `tray-install` to copy and register startup.
+- Stability: Unit tests for core organizing, renaming, rule matching, env expansion, symlink cleanup.
+- Symlinks: Optional, hidden in Downloads, auto-cleanup on startup.
+
+Roadmap / TODO
+
+- UI
+  - Build a cross‑platform UI to edit rules (create/update/delete, validate).
+  - Add a log viewer with filters and search (no raw text file).
+  - Provide “Organize preview” showing proposed moves before applying.
+- Platform Support
+  - Linux tray integration (e.g., via system tray APIs; autostart).
+  - macOS menu bar app; basic autostart integration.
+  - Cross‑platform packaging: Windows MSI/Winget, Linux AppImage/.deb, macOS pkg/Homebrew.
+- Installer
+  - Windows MSI with proper shortcuts and uninstall.
+  - Optional: settings migration and “reset to defaults”.
+- Config & Rules
+  - Built‑in starter templates per platform.
+  - Rule import/export; validation with helpful error messages.
+  - More rule types: file name patterns, size/date conditions, directories.
+- Observability
+  - Structured logs (JSON) and summaries; rolling retention.
+  - Health indicators and alerts for failed moves or permission issues.
+- Performance
+  - Optional event‑based watching (OS FS events) with fallbacks to polling.
+  - Batch moves with rate limiting and backoff for large downloads.
+- Testing & CI
+  - Integration tests around organize flows with symlinks on Windows/Linux.
+  - CI matrix for Windows/Linux/macOS builds (macOS limited to CLI/core).
+- UX & Polish
+  - Tray icon states (active/inactive/error).
+  - Notifications with more context and quick actions.
+  - Internationalization of UI strings.
+
 License
 
 MIT © Eduard Olteanu
