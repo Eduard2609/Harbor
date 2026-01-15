@@ -1,0 +1,28 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        run: cargo build --release -p harbor-tray -p harbor-cli
+      - name: Prepare artifacts
+        run: |
+          New-Item -ItemType Directory -Force -Path dist
+          Copy-Item target\release\harbor-tray.exe dist\
+          Copy-Item target\release\harbor-cli.exe dist\
+          if (Test-Path assets) { Copy-Item assets\*.ico dist\ -ErrorAction SilentlyContinue }
+          Compress-Archive -Path dist\* -DestinationPath dist\Harbor-windows-x86_64.zip -Force
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist\Harbor-windows-x86_64.zip
+            dist\harbor-tray.exe
+            dist\harbor-cli.exe

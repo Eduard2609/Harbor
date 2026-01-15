@@ -183,17 +183,21 @@ fn tray_install(source: Option<String>) -> Result<()> {
     std::fs::create_dir_all(&install_dir)?;
     let dest = install_dir.join("harbor-tray.exe");
     std::fs::copy(&src, &dest)?;
-    let repo_ico = PathBuf::from("assets/harbor.ico");
-    if repo_ico.exists() {
-        let _ = std::fs::copy(&repo_ico, install_dir.join("harbor.ico"));
-    }
-    let repo_tray_ico = PathBuf::from("assets/harbor-tray.ico");
-    if repo_tray_ico.exists() {
-        let _ = std::fs::copy(&repo_tray_ico, install_dir.join("harbor-tray.ico"));
-    }
-    let repo_icon_h = PathBuf::from("assets/icon_h.ico");
-    if repo_icon_h.exists() {
-        let _ = std::fs::copy(&repo_icon_h, install_dir.join("icon_h.ico"));
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|d| d.to_path_buf()));
+    for name in ["icon_h.ico", "harbor-tray.ico", "harbor.ico"] {
+        if let Some(d) = &exe_dir {
+            let p = d.join(name);
+            if p.exists() {
+                let _ = std::fs::copy(&p, install_dir.join(name));
+                continue;
+            }
+        }
+        let p = PathBuf::from(format!("assets/{}", name));
+        if p.exists() {
+            let _ = std::fs::copy(&p, install_dir.join(name));
+        }
     }
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let path = hkcu.open_subkey_with_flags("Software\\Microsoft\\Windows\\CurrentVersion\\Run", winreg::enums::KEY_WRITE)?;
