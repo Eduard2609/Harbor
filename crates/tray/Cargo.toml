@@ -2,6 +2,7 @@
 name = "harbor-tray"
 version = "0.2.0"
 edition = "2021"
+authors = ["Eduard Olteanu"]
 
 [dependencies]
 anyhow = "1.0.91"

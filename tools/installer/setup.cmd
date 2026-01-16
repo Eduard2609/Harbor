@@ -3,7 +3,7 @@ setlocal
 echo Installing Harbor...
 echo.
 if exist harbor-cli.exe (
-  harbor-cli.exe tray-install
+  harbor-cli.exe tray-install --source "%~dp0harbor-tray.exe"
   if %ERRORLEVEL% NEQ 0 (
     echo tray-install failed with code %ERRORLEVEL%
   ) else (

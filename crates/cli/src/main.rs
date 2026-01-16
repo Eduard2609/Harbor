@@ -172,7 +172,17 @@ fn tray_install(source: Option<String>) -> Result<()> {
     let src = if let Some(s) = source {
         PathBuf::from(s)
     } else {
-        PathBuf::from("target/release/harbor-tray.exe")
+        // Try to find it next to the CLI executable first
+        let mut p = std::env::current_exe()
+            .ok()
+            .and_then(|path| path.parent().map(|d| d.join("harbor-tray.exe")))
+            .unwrap_or_else(|| PathBuf::from("harbor-tray.exe"));
+
+        if !p.exists() {
+            // Fallback to dev path
+            p = PathBuf::from("target/release/harbor-tray.exe");
+        }
+        p
     };
     if !src.exists() {
         anyhow::bail!("source not found: {}", src.display());
@@ -200,7 +210,10 @@ fn tray_install(source: Option<String>) -> Result<()> {
         }
     }
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-    let path = hkcu.open_subkey_with_flags("Software\\Microsoft\\Windows\\CurrentVersion\\Run", winreg::enums::KEY_WRITE)?;
+    let path = hkcu.open_subkey_with_flags(
+        "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        winreg::enums::KEY_WRITE,
+    )?;
     let val = format!("\"{}\"", dest.display());
     path.set_value("HarborTray", &val)?;
     println!("installed {}", dest.display());
@@ -215,7 +228,10 @@ fn tray_install(_source: Option<String>) -> Result<()> {
 #[cfg(windows)]
 fn tray_uninstall() -> Result<()> {
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-    if let Ok(path) = hkcu.open_subkey_with_flags("Software\\Microsoft\\Windows\\CurrentVersion\\Run", winreg::enums::KEY_WRITE) {
+    if let Ok(path) = hkcu.open_subkey_with_flags(
+        "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        winreg::enums::KEY_WRITE,
+    ) {
         let _ = path.delete_value("HarborTray");
     }
     println!("uninstalled");
