@@ -35,13 +35,13 @@
                             Id='IconHFile'
                             Name='icon_h.ico'
                             DiskId='1'
-                            Source='$(var.CargoTargetBinDir)\..\..\..\.assets\icon_h.ico'
+                            Source='$(var.CargoTargetBinDir)\..\..\assets\icon_h.ico'
                             />
                         <File
                             Id='HarborIconFile'
                             Name='harbor.ico'
                             DiskId='1'
-                            Source='$(var.CargoTargetBinDir)\..\..\..\.assets\harbor.ico'
+                            Source='$(var.CargoTargetBinDir)\..\..\assets\harbor.ico'
                             />
                         <RegistryValue
                             Root='HKCU'
@@ -183,7 +183,7 @@
         <Property Id='WIXUI_INSTALLDIR' Value='APPLICATIONFOLDER' />
 
         <!-- Icon definitions -->
-        <Icon Id="HarborIcon" SourceFile="$(var.CargoTargetBinDir)\..\..\..\assets\harbor.ico" />
+        <Icon Id="HarborIcon" SourceFile="$(var.CargoTargetBinDir)\..\..\assets\harbor.ico" />
 
     </Product>
 </Wix>
