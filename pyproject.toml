@@ -7,8 +7,8 @@ description = "Harbor specific tasks"
 build = "cargo build --release"
 test = "cargo test"
 clean = "cargo clean"
-msi = "cargo wix --package harbor-tray"
 setup-wix = { shell = "winget install --id=WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements" }
+msi = ["build", "cmd:cargo wix --package harbor-tray --nocapture --no-build"]
 
 [tool.poe.tasks.release]
 sequence = ["build", "msi"]
