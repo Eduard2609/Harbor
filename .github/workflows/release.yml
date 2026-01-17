@@ -19,8 +19,10 @@ jobs:
       - name: Install cargo-wix
         run: cargo install cargo-wix
 
-      - name: Build CLI
-        run: cargo build --release --package harbor-cli
+      - name: Build all binaries
+        run: |
+            cargo build --release --package harbor-cli
+            cargo build --release --package harbor-tray
       
       - name: Build MSI
         run: cargo wix --package harbor-tray --nocapture
