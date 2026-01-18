@@ -1,8 +1,8 @@
 [package]
 name = "harbor-tray"
-version = "0.5.0"
-edition = "2021"
-authors = ["Eduard Olteanu"]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
 
 [dependencies]
 anyhow = "1.0.91"

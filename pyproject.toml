@@ -1,15 +1,35 @@
 [project]
 name = "harbor"
-version = "0.5.0"
+version = "0.5.2"
 description = "Harbor specific tasks"
 
 [tool.poe.tasks]
 build = "cargo build --release"
 test = "cargo test"
 clean = "cargo clean"
-setup-wix = { shell = "winget install --id=WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements" }
-msi = ["build", "cmd:cargo wix --package harbor-tray --nocapture --no-build"]
+setup-wix = "winget install --id=WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements"
+msi = "cargo wix --package harbor-tray --nocapture --no-build"
+
+[tool.poe.tasks.update-local]
+help = "Copy built binaries to local install location for testing"
+cmd = "powershell -ExecutionPolicy Bypass -File tools/update-local-install.ps1"
 
 [tool.poe.tasks.release]
 sequence = ["build", "msi"]
 help = "Build release binaries and MSI installer"
+
+[tool.poe.tasks.version]
+help = "Show current version"
+cmd = "powershell -ExecutionPolicy Bypass -File tools/version.ps1 show"
+
+[tool.poe.tasks.bump-patch]
+help = "Bump patch version (0.5.1 -> 0.5.2)"
+cmd = "powershell -ExecutionPolicy Bypass -File tools/version.ps1 bump-patch"
+
+[tool.poe.tasks.bump-minor]
+help = "Bump minor version (0.5.1 -> 0.6.0)"
+cmd = "powershell -ExecutionPolicy Bypass -File tools/version.ps1 bump-minor"
+
+[tool.poe.tasks.bump-major]
+help = "Bump major version (0.5.1 -> 1.0.0)"
+cmd = "powershell -ExecutionPolicy Bypass -File tools/version.ps1 bump-major"

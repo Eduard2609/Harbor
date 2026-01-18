@@ -8,7 +8,7 @@ use winreg::RegKey;
 
 #[derive(Parser)]
 #[command(name = "harbor")]
-#[command(version = "0.1.0")]
+#[command(version = env!("CARGO_PKG_VERSION"))]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
