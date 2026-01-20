@@ -2,9 +2,9 @@ use anyhow::{Context, Result};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::{Path, PathBuf};
 #[cfg(windows)]
 use std::os::windows::process::CommandExt;
+use std::path::{Path, PathBuf};
 use std::thread;
 use std::time::{Duration, SystemTime};
 
@@ -137,7 +137,9 @@ fn unique_target(target: &Path) -> PathBuf {
 ///
 /// Returns a list of actions taken, where each action is a tuple:
 /// `(original_path, new_path, rule_name, symlink_info)`.
-pub fn organize_once(cfg: &DownloadsConfig) -> Result<Vec<(PathBuf, PathBuf, String, Option<String>)>> {
+pub fn organize_once(
+    cfg: &DownloadsConfig,
+) -> Result<Vec<(PathBuf, PathBuf, String, Option<String>)>> {
     let base = PathBuf::from(&cfg.download_dir);
     let min_age = Duration::from_secs(cfg.min_age_secs.unwrap_or(5));
     let mut actions = Vec::new();
@@ -190,7 +192,7 @@ pub fn organize_once(cfg: &DownloadsConfig) -> Result<Vec<(PathBuf, PathBuf, Str
                 let res = std::os::windows::fs::symlink_file(&target, &path);
                 #[cfg(unix)]
                 let res = std::os::unix::fs::symlink(&target, &path);
-                
+
                 match res {
                     Ok(_) => {
                         symlink_info = Some("Symlink created".to_string());
@@ -267,17 +269,19 @@ pub fn cleanup_old_symlinks(cfg: &DownloadsConfig) -> Result<usize> {
     if !base.exists() {
         return Ok(0);
     }
-    
+
     let mut count = 0;
     // Collect target dirs to check against
-    let target_dirs: Vec<PathBuf> = cfg.rules.iter()
+    let target_dirs: Vec<PathBuf> = cfg
+        .rules
+        .iter()
         .map(|r| PathBuf::from(&r.target_dir))
         .collect();
 
     for entry in fs::read_dir(&base).with_context(|| format!("list {}", base.display()))? {
         let entry = entry?;
         let path = entry.path();
-        
+
         let meta = match fs::symlink_metadata(&path) {
             Ok(m) => m,
             Err(_) => continue,
@@ -294,7 +298,7 @@ pub fn cleanup_old_symlinks(cfg: &DownloadsConfig) -> Result<usize> {
                 };
 
                 let points_to_our_dir = target_dirs.iter().any(|d| abs_target.starts_with(d));
-                
+
                 if points_to_our_dir {
                     // It's one of ours, delete it
                     if fs::remove_file(&path).is_ok() {
@@ -375,7 +379,7 @@ mod tests {
             create_symlink: None,
         };
         assert!(matches_rule(&file_path, &meta, &rule_size));
-        
+
         let rule_fail = Rule {
             name: "Fail".into(),
             extensions: Some(vec!["jpg".into()]),
@@ -392,7 +396,7 @@ mod tests {
     fn test_unique_target() {
         let temp = TempDir::new().unwrap();
         let target = temp.path().join("file.txt");
-        
+
         // 1. Doesn't exist
         assert_eq!(unique_target(&target), target);
 
@@ -453,7 +457,7 @@ mod tests {
 
         // Create a symlink in dl -> target
         let symlink_path = dl.join("link.png");
-        
+
         #[cfg(windows)]
         let res = std::os::windows::fs::symlink_file(&target, &symlink_path);
         #[cfg(unix)]

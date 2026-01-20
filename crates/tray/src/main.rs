@@ -11,11 +11,7 @@ use std::sync::{
     Arc, Mutex,
 };
 use std::thread;
-use windows::{
-    core::PCWSTR,
-    Win32::Foundation::*,
-    Win32::System::Threading::*,
-};
+use windows::{core::PCWSTR, Win32::Foundation::*, Win32::System::Threading::*};
 
 extern crate native_windows_gui as nwg;
 
@@ -28,14 +24,17 @@ impl SingleInstance {
     fn new(name: &str) -> Result<Self> {
         unsafe {
             let mutex_name = format!("Global\\{}", name);
-            let wide_name: Vec<u16> = mutex_name.encode_utf16().chain(std::iter::once(0)).collect();
-            
+            let wide_name: Vec<u16> = mutex_name
+                .encode_utf16()
+                .chain(std::iter::once(0))
+                .collect();
+
             let mutex_handle = CreateMutexW(
                 None,
                 true, // Initially owned
                 PCWSTR(wide_name.as_ptr()),
             )?;
-            
+
             // Check if mutex already existed
             let last_error = GetLastError();
             if last_error.0 == ERROR_ALREADY_EXISTS.0 {
@@ -43,7 +42,7 @@ impl SingleInstance {
                 let _ = CloseHandle(mutex_handle);
                 anyhow::bail!("Another instance of Harbor is already running");
             }
-            
+
             Ok(Self {
                 _mutex_handle: mutex_handle,
             })
@@ -119,9 +118,7 @@ fn open_config(path: &PathBuf) {
 
 fn open_folder(path: &PathBuf) {
     if cfg!(windows) {
-        let _ = std::process::Command::new("explorer")
-            .arg(path)
-            .spawn();
+        let _ = std::process::Command::new("explorer").arg(path).spawn();
     }
 }
 
@@ -163,11 +160,11 @@ fn append_recent(actions: &[(PathBuf, PathBuf, String, Option<String>)]) {
 fn main() -> Result<()> {
     // Ensure only one instance of Harbor is running
     let _instance = SingleInstance::new("Harbor-Tray-Instance")?;
-    
+
     nwg::init()?;
 
     let cfg_path = local_appdata_harbor().join("harbor.downloads.yaml");
-    
+
     // If config doesn't exist, try to copy from default template
     if !cfg_path.exists() {
         let default_config = local_appdata_harbor().join("harbor.downloads.yaml.default");
@@ -176,7 +173,7 @@ fn main() -> Result<()> {
             let _ = std::fs::copy(&default_config, &cfg_path);
         }
     }
-    
+
     let cfg = if cfg_path.exists() {
         load_downloads_config(&cfg_path)?
     } else {
@@ -200,10 +197,13 @@ fn main() -> Result<()> {
                 Rule {
                     name: "Images".to_string(),
                     extensions: Some(
-                        ["jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "heic", "svg", "avif"]
-                            .iter()
-                            .map(|s| s.to_string())
-                            .collect(),
+                        [
+                            "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "heic", "svg",
+                            "avif",
+                        ]
+                        .iter()
+                        .map(|s| s.to_string())
+                        .collect(),
                     ),
                     pattern: None,
                     min_size_bytes: None,
@@ -256,10 +256,12 @@ fn main() -> Result<()> {
                 Rule {
                     name: "Documents".to_string(),
                     extensions: Some(
-                        ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf"]
-                            .iter()
-                            .map(|s| s.to_string())
-                            .collect(),
+                        [
+                            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf",
+                        ]
+                        .iter()
+                        .map(|s| s.to_string())
+                        .collect(),
                     ),
                     pattern: None,
                     min_size_bytes: None,
